@@ -48,24 +48,6 @@ $fAction = 0
 $sLastSel = ""
 While 1
     Sleep(100)
-
-    If GUICtrlRead($lstListBox) <> $sLastSel Then
-        $sLastSel = GUICtrlRead($lstListBox)
-        ; Wait to see if there is a double click
-        Sleep(150)
-        If $fAction = 1 Then
-            MsgBox(0, "", "Listbox Double Click")
-        Else
-            ;~ MsgBox(0, "", "Listbox Single Click")
-        EndIf
-        $fAction = 0
-    Else
-        If $fAction = 1 Then
-            MsgBox(0, "", "Listbox Double Click")
-            $fAction = 0
-        EndIf
-    EndIf
-
 WEnd
 
 Func ExitApplication()
