@@ -4,7 +4,6 @@
 #include <WindowsConstants.au3>
 Opt("GUIOnEventMode", 1)
 
-Global $LBN_DBLCLK
 Global $frmMainForm = GUICreate("Copy Snippet", 300, 600, -1, -1)
 GUISetOnEvent($GUI_EVENT_CLOSE, "ExitApplication")
 Global $txtInput = GUICtrlCreateInput("", 8, 16, 284, 21)
@@ -134,7 +133,7 @@ EndFunc
 Func ShowAllItems()
     GUICtrlSetData($lstListBox, "") ; Clear current listbox content
 
-    Local $fileContent = FileRead("C:\Users\mmmb\MEGA\Code\Autoit\TextFileSnippet\snippets.txt")
+    Local $fileContent = FileRead("snippets.txt")
     If @error Then
         MsgBox(16, "Error", "Failed to read file 'snippets.txt'!")
         Return
