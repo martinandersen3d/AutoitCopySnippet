@@ -4,6 +4,7 @@
 #include <WindowsConstants.au3>
 Opt("GUIOnEventMode", 1)
 
+Global $LBN_DBLCLK
 Global $frmMainForm = GUICreate("Copy Snippet", 300, 600, -1, -1)
 GUISetOnEvent($GUI_EVENT_CLOSE, "ExitApplication")
 Global $txtInput = GUICtrlCreateInput("", 8, 16, 284, 21)
@@ -12,7 +13,7 @@ Global $lstListBox = GUICtrlCreateList("", 8, 45, 284, 557)
 GUICtrlSetFont(-1, 10, 400)
 GUISetState(@SW_SHOW, $frmMainForm)
 
-GUIRegisterMsg($WM_KEYDOWN, "IsPressed")
+;~ GUIRegisterMsg($WM_KEYDOWN, "IsPressed")
 GUIRegisterMsg($WM_COMMAND, "WM_COMMAND")
 GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 GUIRegisterMsg($WM_ACTIVATE, "WM_ACTIVATE_Handler")
@@ -84,7 +85,7 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
         Case $EN_RETURN ; Enter key for $txtInput
             Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
             If $focusedCtrl = $txtInput Then
-                CopyFirstItemToClipboard()
+                
 				ConsoleWrite("Enter")
                 Return $GUI_RUNDEFMSG
             EndIf
@@ -92,12 +93,13 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
             Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
             If $focusedCtrl = $lstListBox Then
                 ; Handle double-click on listbox item (if needed)
+                ConsoleWrite("Double click")
                 Return $GUI_RUNDEFMSG
             EndIf
         Case $NM_RETURN ; Enter key for general control notification
             Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
             If $focusedCtrl = $txtInput Then
-                CopyFirstItemToClipboard()
+                
                 Return $GUI_RUNDEFMSG
             EndIf
         Case $NM_DOWN ; Down key
