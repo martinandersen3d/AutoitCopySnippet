@@ -2,6 +2,7 @@
 #include <EditConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <WindowsConstants.au3>
+#include <StructureConstants.au3>
 Opt("GUIOnEventMode", 1)
 
 Global $frmMainForm = GUICreate("Copy Snippet", 300, 600, -1, -1)
@@ -9,6 +10,7 @@ GUISetOnEvent($GUI_EVENT_CLOSE, "ExitApplication")
 Global $txtInput = GUICtrlCreateInput("", 8, 16, 284, 21)
 GUICtrlSetFont(-1, 10, 400)
 Global $lstListBox = GUICtrlCreateList("", 8, 45, 284, 557)
+$hWndListBox = GUICtrlGetHandle($lstListBox)
 GUICtrlSetFont(-1, 10, 400)
 GUISetState(@SW_SHOW, $frmMainForm)
 
@@ -42,9 +44,28 @@ EndFunc
 
 ; Read snippets from file and populate listbox
 ReadSnippetsFromFile("snippets.txt")
-
+$fAction = 0
+$sLastSel = ""
 While 1
     Sleep(100)
+
+    If GUICtrlRead($lstListBox) <> $sLastSel Then
+        $sLastSel = GUICtrlRead($lstListBox)
+        ; Wait to see if there is a double click
+        Sleep(150)
+        If $fAction = 1 Then
+            MsgBox(0, "", "Listbox Double Click")
+        Else
+            ;~ MsgBox(0, "", "Listbox Single Click")
+        EndIf
+        $fAction = 0
+    Else
+        If $fAction = 1 Then
+            MsgBox(0, "", "Listbox Double Click")
+            $fAction = 0
+        EndIf
+    EndIf
+
 WEnd
 
 Func ExitApplication()
@@ -72,6 +93,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 
     Return $GUI_RUNDEFMSG
 EndFunc
+
 
 Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
     Local $nmhdr = DllStructCreate("int;int;int", $lParam)
