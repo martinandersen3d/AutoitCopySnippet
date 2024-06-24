@@ -29,25 +29,52 @@ Func EnterPressed()
 EndFunc
 
 
-;~ Func DownPressed()
-;~     ConsoleWrite("Down pressed!")
-;~ 	
-;~ 	If ControlGetFocus ( $lstListBox ) Then
-;~         ConsoleWrite("Listbox has focus." & @CRLF)
-;~     Else
-;~         ConsoleWrite("Listbox does not have focus." & @CRLF)
-;~ 		GUICtrlSetState($lstListBox, $GUI_FOCUS)
-;~   
-;~     EndIf
-;~ EndFunc
+
+
+Func DownPressed()
+    ConsoleWrite("Down pressed!")
+    GUICtrlSetState($lstListBox, $GUI_FOCUS)
+	HotKeySet("{Down}")
+	;~ If ControlGetFocus ( $lstListBox ) Then
+    ;~     ConsoleWrite("Listbox has focus." & @CRLF)
+    ;~ Else
+    ;~     ConsoleWrite("Listbox does not have focus." & @CRLF)
+  
+    ;~ EndIf
+EndFunc
 
 
 ; Read snippets from file and populate listbox
 ReadSnippetsFromFile("snippets.txt")
 $fAction = 0
 $sLastSel = ""
+Global $sMsg1 = ""
 While 1
-    Sleep(100)
+    Sleep(50)
+      Switch GUIGetMsg()
+        Case $GUI_EVENT_CLOSE, $idOK
+            GUIDelete()
+            Exit
+        Case Else
+            $sFocus = ControlGetFocus($frmMainForm)
+            $hFocus = ControlGetHandle($frmMainForm, "", $sFocus)
+            $ctrlFocus = _WinAPI_GetDlgCtrlID($hFocus)
+            $sMsg = "Focus:" & @CRLF & _
+                    @TAB & "ClassNameNN = " & $sFocus & @CRLF & _
+                    @TAB & "Hwnd = " & $hFocus & @CRLF & _
+                    @TAB & "ID = " & $ctrlFocus
+            If $sMsg <> $sMsg1 Then
+                $sMsg1 = $sMsg
+                if $sFocus = "Edit1" Then
+                    HotKeySet("{Down}","DownPressed")
+                EndIf
+                if $sFocus = "ListBox1" Then
+                    HotKeySet("{Down}")
+                EndIf
+            EndIf
+    EndSwitch
+
+
 WEnd
 
 Func ExitApplication()
