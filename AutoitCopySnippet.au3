@@ -53,9 +53,11 @@ While 1
                     @TAB & "ID = " & $ctrlFocus
             If $sMsg <> $sMsg1 Then
                 $sMsg1 = $sMsg
+                ;~ If Edit Text Box Has Focus
                 if $sFocus = "Edit1" Then
                     HotKeySet("{Down}","DownPressed")
                 EndIf
+                ;~ If ListBox Has Focus
                 if $sFocus = "ListBox1" Then
                     ;~ Reset/disable hotkey
                     HotKeySet("{Down}")
