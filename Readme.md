@@ -9,4 +9,5 @@ Features:
 
 
 Example Gif:
+
 ![alt](./screen-recording.gif)
