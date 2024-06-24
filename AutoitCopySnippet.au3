@@ -14,12 +14,10 @@ $hWndListBox = GUICtrlGetHandle($lstListBox)
 GUICtrlSetFont(-1, 10, 400)
 GUISetState(@SW_SHOW, $frmMainForm)
 
-;~ GUIRegisterMsg($WM_KEYDOWN, "IsPressed")
 GUIRegisterMsg($WM_COMMAND, "WM_COMMAND")
-GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 GUIRegisterMsg($WM_ACTIVATE, "WM_ACTIVATE_Handler")
- HotKeySet("{Enter}","EnterPressed")
-  HotKeySet("{Esc}","ExitApplication")
+HotKeySet("{Enter}","EnterPressed")
+HotKeySet("{Esc}","ExitApplication")
   
 Func EnterPressed()
     ConsoleWrite("Enter Key is pressed!")
@@ -28,26 +26,16 @@ Func EnterPressed()
 	ExitApplication()
 EndFunc
 
-
-
-
 Func DownPressed()
     ConsoleWrite("Down pressed!")
     GUICtrlSetState($lstListBox, $GUI_FOCUS)
+    ;~ Reset/disable hotkey
 	HotKeySet("{Down}")
-	;~ If ControlGetFocus ( $lstListBox ) Then
-    ;~     ConsoleWrite("Listbox has focus." & @CRLF)
-    ;~ Else
-    ;~     ConsoleWrite("Listbox does not have focus." & @CRLF)
-  
-    ;~ EndIf
 EndFunc
-
 
 ; Read snippets from file and populate listbox
 ReadSnippetsFromFile("snippets.txt")
-$fAction = 0
-$sLastSel = ""
+
 Global $sMsg1 = ""
 While 1
     Sleep(50)
@@ -69,6 +57,7 @@ While 1
                     HotKeySet("{Down}","DownPressed")
                 EndIf
                 if $sFocus = "ListBox1" Then
+                    ;~ Reset/disable hotkey
                     HotKeySet("{Down}")
                 EndIf
             EndIf
@@ -103,46 +92,6 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
     Return $GUI_RUNDEFMSG
 EndFunc
 
-
-Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
-    Local $nmhdr = DllStructCreate("int;int;int", $lParam)
-    Local $code = DllStructGetData($nmhdr, 3)
-
-    Switch $code
-        Case $EN_CHANGE
-            ; EN_CHANGE for $txtInput handled in WM_COMMAND
-            Return $GUI_RUNDEFMSG
-        Case $EN_RETURN ; Enter key for $txtInput
-            Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
-            If $focusedCtrl = $txtInput Then
-                
-				ConsoleWrite("Enter")
-                Return $GUI_RUNDEFMSG
-            EndIf
-        Case $LBN_DBLCLK ; Double-click on listbox item
-            Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
-            If $focusedCtrl = $lstListBox Then
-                ; Handle double-click on listbox item (if needed)
-                ConsoleWrite("Double click")
-                Return $GUI_RUNDEFMSG
-            EndIf
-        Case $NM_RETURN ; Enter key for general control notification
-            Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
-            If $focusedCtrl = $txtInput Then
-                
-                Return $GUI_RUNDEFMSG
-            EndIf
-        Case $NM_DOWN ; Down key
-            Local $focusedCtrl = ControlGetFocus($frmMainForm, "")
-            If $focusedCtrl = $txtInput Then
-                GUICtrlSetState($lstListBox, $GUI_FOCUS)
-				ConsoleWrite("Down")
-                Return $GUI_RUNDEFMSG
-            EndIf
-    EndSwitch
-
-    Return $GUI_RUNDEFMSG
-EndFunc
 
 Func ReadSnippetsFromFile($fileName)
     Local $fileContent = FileRead($fileName)
