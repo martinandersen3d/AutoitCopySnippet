@@ -6,3 +6,7 @@ Features:
 - Press ENTER to copy selected to clipboard
 
 ![alt](./screenshot.png)
+
+
+Example Gif:
+![alt](./screen-recording.gif)
