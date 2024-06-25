@@ -5,14 +5,22 @@
 #include <StructureConstants.au3>
 Opt("GUIOnEventMode", 1)
 
-Global $frmMainForm = GUICreate("Copy Snippet", 300, 600, -1, -1)
+Global $frmMainForm = GUICreate("Copy Snippet", 300, 616, -1, -1)
 GUISetOnEvent($GUI_EVENT_CLOSE, "ExitApplication")
 Global $txtInput = GUICtrlCreateInput("", 8, 16, 284, 21)
 GUICtrlSetFont(-1, 10, 400)
 Global $lstListBox = GUICtrlCreateList("", 8, 45, 284, 557)
 $hWndListBox = GUICtrlGetHandle($lstListBox)
 GUICtrlSetFont(-1, 10, 400)
-GUISetState(@SW_SHOW, $frmMainForm)
+
+; Create a clickable label
+$label = GUICtrlCreateLabel("Open snippets.txt", 100, 600, 200, 20)
+GUICtrlSetFont($label, 10, 400, 0, "Arial")
+GUICtrlSetColor($label, 0x0000FF) ; Blue color
+GUICtrlSetCursor($label, 0) ; Hand cursor
+
+; Register the label click event
+GUICtrlSetOnEvent($label, "LabelClicked")
 
 GUIRegisterMsg($WM_COMMAND, "WM_COMMAND")
 GUIRegisterMsg($WM_ACTIVATE, "WM_ACTIVATE_Handler")
@@ -20,14 +28,14 @@ HotKeySet("{Enter}","EnterPressed")
 HotKeySet("{Esc}","ExitApplication")
   
 Func EnterPressed()
-    ConsoleWrite("Enter Key is pressed!")
+    ;~ ConsoleWrite("Enter Key is pressed!")
 	CopySelectedItemToClipboard()
 	Sleep(0.2)
 	ExitApplication()
 EndFunc
 
 Func DownPressed()
-    ConsoleWrite("Down pressed!")
+    ;~ ConsoleWrite("Down pressed!")
     GUICtrlSetState($lstListBox, $GUI_FOCUS)
     ;~ Reset/disable hotkey
 	HotKeySet("{Down}")
@@ -35,11 +43,13 @@ EndFunc
 
 ; Read snippets from file and populate listbox
 ReadSnippetsFromFile("snippets.txt")
-
 Global $sMsg1 = ""
+GUISetState(@SW_SHOW, $frmMainForm)
+
 While 1
-    Sleep(50)
-      Switch GUIGetMsg()
+    
+    $msg = GUIGetMsg()
+      Switch $msg
         Case $GUI_EVENT_CLOSE, $idOK
             GUIDelete()
             Exit
@@ -51,6 +61,7 @@ While 1
                     @TAB & "ClassNameNN = " & $sFocus & @CRLF & _
                     @TAB & "Hwnd = " & $hFocus & @CRLF & _
                     @TAB & "ID = " & $ctrlFocus
+            ConsoleWrite($sMsg)
             If $sMsg <> $sMsg1 Then
                 $sMsg1 = $sMsg
                 ;~ If Edit Text Box Has Focus
@@ -65,7 +76,7 @@ While 1
             EndIf
     EndSwitch
 
-
+    Sleep(50)
 WEnd
 
 Func ExitApplication()
@@ -183,3 +194,18 @@ Func WM_ACTIVATE_Handler($hWnd, $Msg, $wParam, $lParam)
     EndIf
     Return $GUI_RUNDEFMSG
 EndFunc   ;==>WM_ACTIVATE_Handler
+
+
+Func LabelClicked()
+    ; Define the file path
+    Local $filePath = "snippets.txt"
+
+    ; Check if the file exists
+    If FileExists($filePath) Then
+        ; Open the file in Notepad
+        ShellExecute("notepad.exe", $filePath)
+    Else
+        ; Display an error message if the file does not exist
+        MsgBox(16, "Error", "The file 'snippets.txt' does not exist.")
+    EndIf
+EndFunc
